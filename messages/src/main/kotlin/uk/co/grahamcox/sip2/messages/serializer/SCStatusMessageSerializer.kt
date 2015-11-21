@@ -17,7 +17,7 @@ class SCStatusMessageSerializer : MessageSerializer<SCStatusMessage> {
 
         return listOf(
                 getStatusCode(message.statusCode),
-                message.maxPrintWidth.toString(),
+                message.maxPrintWidth.toString().padStart(3, '0'),
                 message.protocolVersion
         )
     }

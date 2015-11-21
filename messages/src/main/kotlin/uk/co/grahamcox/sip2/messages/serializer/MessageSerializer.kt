@@ -17,4 +17,12 @@ interface MessageSerializer<T : Message> {
      * @return the fixed components
      */
     fun buildFixedComponents(message: T) : List<String>
+
+    /**
+     * Buid the variable components of the given message
+     * @param message The message to build the variable components for
+     * @return the variable components. This is a list of Key to Value pairs, because the fields are sometiems
+     * repeatable and so a simple map would actually complicate the simple case too much.
+     */
+    fun buildVariableComponents(message: T) : List<Pair<String, String>>
 }

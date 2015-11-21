@@ -1,5 +1,6 @@
 package uk.co.grahamcox.sip2.messages.serializer
 
+import uk.co.grahamcox.sip2.messages.ResendMessage
 import uk.co.grahamcox.sip2.messages.SCStatusCode
 import uk.co.grahamcox.sip2.messages.SCStatusMessage
 
@@ -21,6 +22,9 @@ class SCStatusMessageSerializer : MessageSerializer<SCStatusMessage> {
                 message.protocolVersion
         )
     }
+
+    /** There are no variable components for an SC Status message */
+    override fun buildVariableComponents(message: SCStatusMessage): List<Pair<String, String>> = emptyList()
 
     /**
      * Get the SIP2 Code for the given Status Code

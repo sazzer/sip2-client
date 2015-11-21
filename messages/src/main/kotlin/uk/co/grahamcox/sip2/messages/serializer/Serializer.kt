@@ -8,6 +8,8 @@ import uk.co.grahamcox.sip2.messages.Message
  * @property serializers The map of serializers to use for serializing SIP2 Messages
  */
 class Serializer(val serializers: Map<Class<out Message>, MessageSerializer<out Message>>) {
+    /** The character that separates variable fields */
+    private val VARIABLE_FIELD_SEPARATOR = "|"
     /** The logger to use */
     private val LOG = LoggerFactory.getLogger(Serializer::class.java)
     /**
@@ -28,11 +30,17 @@ class Serializer(val serializers: Map<Class<out Message>, MessageSerializer<out 
 
         val messageId: String = serializer.messageId
         val fixedFields = serializer.buildFixedComponents(message)
+        val variableFields = serializer.buildVariableComponents(message)
 
         val result = StringBuilder()
         result.append(messageId)
         fixedFields.forEach {
             f -> result.append(f)
+        }
+        variableFields.forEach {
+            f -> result.append(f.first)
+                .append(f.second)
+                .append(VARIABLE_FIELD_SEPARATOR)
         }
         val output = result.toString()
         LOG.debug("Successfully serialized message {} into '{}'", message, output)

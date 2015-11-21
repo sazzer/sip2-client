@@ -64,6 +64,8 @@ class SerializerTest : EasyMockSupport() {
                 .andReturn("97")
         EasyMock.expect(mockMessageSerializer.buildFixedComponents(message))
                 .andReturn(emptyList())
+        EasyMock.expect(mockMessageSerializer.buildVariableComponents(message))
+                .andReturn(emptyList())
         replayAll()
 
         val expected = "97"
@@ -85,9 +87,81 @@ class SerializerTest : EasyMockSupport() {
                         "23",
                         "456"
                 ))
+        EasyMock.expect(mockMessageSerializer.buildVariableComponents(message))
+                .andReturn(emptyList())
         replayAll()
 
         val expected = "97123456"
+
+        val serializedMessage = testSubject.serialize(message)
+        Assert.assertEquals(expected, serializedMessage)
+    }
+
+    /**
+     * Serialize a message that has variable fields but no fixed fields
+     */
+    @Test
+    fun serializeMessageVariableFieldsOnly() {
+        EasyMock.expect(mockMessageSerializer.messageId)
+                .andReturn("97")
+        EasyMock.expect(mockMessageSerializer.buildFixedComponents(message))
+                .andReturn(emptyList())
+        EasyMock.expect(mockMessageSerializer.buildVariableComponents(message))
+                .andReturn(listOf(
+                        "AA" to "Hello",
+                        "BB" to "World"
+                ))
+        replayAll()
+
+        val expected = "97AAHello|BBWorld|"
+
+        val serializedMessage = testSubject.serialize(message)
+        Assert.assertEquals(expected, serializedMessage)
+    }
+
+    /**
+     * Serialize a message that has multiple variable fields with the same key
+     */
+    @Test
+    fun serializeMessageRepeatedVariableFields() {
+        EasyMock.expect(mockMessageSerializer.messageId)
+                .andReturn("97")
+        EasyMock.expect(mockMessageSerializer.buildFixedComponents(message))
+                .andReturn(emptyList())
+        EasyMock.expect(mockMessageSerializer.buildVariableComponents(message))
+                .andReturn(listOf(
+                        "AA" to "Hello",
+                        "AA" to "World"
+                ))
+        replayAll()
+
+        val expected = "97AAHello|AAWorld|"
+
+        val serializedMessage = testSubject.serialize(message)
+        Assert.assertEquals(expected, serializedMessage)
+    }
+
+    /**
+     * Serialize a message that has both fixed fields and variable fields
+     */
+    @Test
+    fun serializeMessageFixedVariableFields() {
+        EasyMock.expect(mockMessageSerializer.messageId)
+                .andReturn("97")
+        EasyMock.expect(mockMessageSerializer.buildFixedComponents(message))
+                .andReturn(listOf(
+                        "1",
+                        "23",
+                        "456"
+                ))
+        EasyMock.expect(mockMessageSerializer.buildVariableComponents(message))
+                .andReturn(listOf(
+                        "AA" to "Hello",
+                        "BB" to "World"
+                ))
+        replayAll()
+
+        val expected = "97123456AAHello|BBWorld|"
 
         val serializedMessage = testSubject.serialize(message)
         Assert.assertEquals(expected, serializedMessage)

@@ -1,5 +1,9 @@
 package uk.co.grahamcox.sip2.messages
 
+import javax.validation.constraints.Max
+import javax.validation.constraints.Min
+import javax.validation.constraints.Size
+
 /**
  * Enumeration of the supported SC Status Codes
  */
@@ -20,6 +24,6 @@ enum class SCStatusCode {
  */
 data class SCStatusMessage(
         val statusCode : SCStatusCode,
-        val maxPrintWidth: Int,
-        val protocolVersion: String = "2.00"
+        @field:Max(999) @field:Min(0) val maxPrintWidth: Int,
+        @field:Size(min = 4, max = 4) val protocolVersion: String = "2.00"
 ) : Message

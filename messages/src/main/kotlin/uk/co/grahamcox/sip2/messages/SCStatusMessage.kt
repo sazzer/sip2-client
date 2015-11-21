@@ -18,8 +18,7 @@ enum class SCStatusCode {
  * @property maxPrintWidth The maximim print width for printing messages
  * @property protocolVersion The protocol version to support
  */
-@MessageId("99")
-class SCStatusMessage(
+data class SCStatusMessage(
         val statusCode : SCStatusCode,
         val maxPrintWidth: Int,
         val protocolVersion: String = "2.00"

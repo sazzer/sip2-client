@@ -10,4 +10,11 @@ interface MessageSerializer<T : Message> {
      * Get the ID of the Message that this serializer builds
      */
     val messageId: String
+
+    /**
+     * Build the fixed components of the given message
+     * @param message The message to build the fixed components for
+     * @return the fixed components
+     */
+    fun buildFixedComponents(message: T) : List<String>
 }

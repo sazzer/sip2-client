@@ -7,7 +7,7 @@ import uk.co.grahamcox.sip2.messages.Message
  * Mechanism by which we can serialize SIP2 Messages into strings
  * @property serializers The map of serializers to use for serializing SIP2 Messages
  */
-class Serializer(val serializers: Map<Class<*>, MessageSerializer<*>>) {
+class Serializer(val serializers: Map<Class<out Message>, MessageSerializer<out Message>>) {
     /** The logger to use */
     private val LOG = LoggerFactory.getLogger(Serializer::class.java)
     /**
@@ -16,10 +16,10 @@ class Serializer(val serializers: Map<Class<*>, MessageSerializer<*>>) {
      * @param message The message to serialize
      * @return the serialized message
      */
-    fun serialize(message: Message) : String {
+    fun <T : Message> serialize(message: T) : String {
         val messageClass = message.javaClass
         LOG.debug("Serializing message {} of type {}", message, messageClass)
-        val serializer = serializers[messageClass]
+        val serializer = serializers[messageClass] as MessageSerializer<T>?
 
         if (serializer == null) {
             LOG.error("Attempted to serialize message of unexpected type {}", messageClass)
@@ -27,10 +27,13 @@ class Serializer(val serializers: Map<Class<*>, MessageSerializer<*>>) {
         }
 
         val messageId: String = serializer.messageId
+        val fixedFields = serializer.buildFixedComponents(message)
 
         val result = StringBuilder()
         result.append(messageId)
-
+        fixedFields.forEach {
+            f -> result.append(f)
+        }
         val output = result.toString()
         LOG.debug("Successfully serialized message {} into '{}'", message, output)
         return output

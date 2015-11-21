@@ -34,4 +34,18 @@ class SerializerTest {
         val serializedMessage = serializer.serialize(message)
         Assert.assertEquals(expected, serializedMessage)
     }
+
+    /**
+     * Serialize a SC Status Message into it's string form.
+     * This message has fixed components but no variable at all.
+     */
+    @Test
+    fun serializeSCStatusMessage() {
+        val serializer = Serializer(mapOf(SCStatusMessage::class.java to SCStatusMessageSerializer()))
+        val message = SCStatusMessage(SCStatusCode.OK, 100)
+        val expected = "9901002.00"
+
+        val serializedMessage = serializer.serialize(message)
+        Assert.assertEquals(expected, serializedMessage)
+    }
 }
